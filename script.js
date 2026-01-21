@@ -1,96 +1,187 @@
-const STAT_TO_ABILITY = [
-  [1, 40, 8],
-  [41, 60, 10],
-  [61, 80, 12],
-  [81, 100, 14],
-  [101, 120, 16],
-  [121, 140, 18],
-  [141, 160, 20],
-  [161, 220, 22],
-  [221, 999, 25]
-];
-
-const TYPE_MAP = {
-  normal: "Bludgeoning/Slashing",
-  fire: "Fire",
-  water: "Cold",
-  electric: "Lightning",
-  grass: "Poison/Slashing",
-  ice: "Cold",
-  fighting: "Bludgeoning",
-  poison: "Poison",
-  ground: "Bludgeoning",
-  flying: "Slashing",
-  psychic: "Psychic",
-  bug: "Piercing",
-  rock: "Bludgeoning",
-  ghost: "Necrotic",
-  dragon: "Force",
-  dark: "Necrotic",
-  steel: "Slashing",
-  fairy: "Radiant"
-};
-
-// === Helper Functions ===
-
-function convertStat(base) {
-  for (let [low, high, score] of STAT_TO_ABILITY) {
-    if (base >= low && base <= high) return score;
-  }
-  return 10;
+:root {
+  --bg: #0f1220;
+  --panel: #161a2d;
+  --card: #14182a;
+  --text: #e9ecff;
+  --muted: #aab1e6;
+  --border: rgba(255,255,255,0.10);
+  --accent: #7aa7ff;
+  --good: #4ee1a0;
+  --bad: #ff6b6b;
 }
 
-function mod(score) {
-  return Math.floor((score - 10) / 2);
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  background: radial-gradient(1000px 600px at 20% 0%, rgba(122,167,255,0.18), transparent),
+              radial-gradient(900px 700px at 100% 10%, rgba(78,225,160,0.12), transparent),
+              var(--bg);
+  color: var(--text);
 }
-// === Main Generator ===
 
-async function generate() {
-  const input = document.getElementById("pokemonName").value.trim().toLowerCase();
-  const output = document.getElementById("output");
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
 
-  if (!input) {
-    output.textContent = "Please enter a Pokémon name.";
-    return;
-  }
+.header h1 { margin: 0 0 6px; }
+.sub { margin: 0 0 16px; color: var(--muted); }
 
-  try {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${input}`);
-    if (!res.ok) throw new Error("Pokémon not found");
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
 
-    const data = await res.json();
+.row {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1.2fr 1fr 1.2fr;
+}
 
-    const stats = {};
-    data.stats.forEach(s => stats[s.stat.name] = s.base_stat);
+.field span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
 
-    const abilities = {
-      STR: convertStat(stats.attack),
-      DEX: convertStat(stats.speed),
-      CON: convertStat(stats.defense),
-      INT: convertStat(stats["special-attack"]),
-      WIS: convertStat(stats["special-defense"]),
-      CHA: 10
-    };
+input, select {
+  width: 100%;
+  padding: 10px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  outline: none;
+}
 
-    let ac = 10 + mod(abilities.DEX);
+input[type="range"] { padding: 0; }
 
-    const types = data.types.map(t => t.type.name);
-    const dmgTypes = types.map(t => TYPE_MAP[t] ?? "Unknown");
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
 
-    output.textContent =
-`Name: ${data.name.toUpperCase()}
-Types: ${types.join(", ")}
-Damage Types: ${dmgTypes.join(", ")}
-Armor Class: ${ac}
+button {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(122,167,255,0.15);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 600;
+}
 
-STR ${abilities.STR} (${mod(abilities.STR)})
-DEX ${abilities.DEX} (${mod(abilities.DEX)})
-CON ${abilities.CON} (${mod(abilities.CON)})
-INT ${abilities.INT} (${mod(abilities.INT)})
-WIS ${abilities.WIS} (${mod(abilities.WIS)})
-CHA ${abilities.CHA} (${mod(abilities.CHA)})`;
+button:hover { border-color: rgba(255,255,255,0.25); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  } catch (err) {
+button.secondary { background: rgba(255,255,255,0.06); }
+
+.status {
+  margin-top: 10px;
+  color: var(--muted);
+  min-height: 18px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.cardTop {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.spriteWrap {
+  width: 160px;
+  height: 160px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.04);
+  display: grid;
+  place-items: center;
+}
+
+#sprite {
+  width: 128px;
+  height: 128px;
+  image-rendering: pixelated;
+}
+
+.meta h2 { margin: 0 0 8px; }
+.dexEntry { margin: 8px 0 0; color: var(--muted); line-height: 1.35; }
+
+.badges { display: flex; gap: 8px; flex-wrap: wrap; }
+.badge {
+  font-size: 12px;
+  padding: 6px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.05);
+  color: var(--text);
+}
+
+.split {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.pre {
+  background: rgba(0,0,0,0.22);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  white-space: pre-wrap;
+  min-height: 220px;
+}
+
+.learnsetHeader { margin-bottom: 8px; }
+.learnset {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.16);
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.learnRow {
+  display: grid;
+  grid-template-columns: 64px 1fr 120px;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.learnRow:last-child { border-bottom: none; }
+.lv { color: var(--muted); }
+.moveName { font-weight: 700; }
+.moveMeta { color: var(--muted); text-align: right; font-size: 12px; }
+
+.hint { color: var(--muted); font-size: 12px; }
+
+.footer { margin-top: 14px; color: var(--muted); }
+
+@media (max-width: 900px) {
+  .row { grid-template-columns: 1fr; }
+  .cardTop { grid-template-columns: 1fr; }
+  .split { grid-template-columns: 1fr; }
+}
+
     output.textContent = "Error: Pokémon not found or API issue.";
   }
 }

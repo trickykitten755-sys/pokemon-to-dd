@@ -1,0 +1,17 @@
+body {
+  font-family: monospace;
+  background: #111;
+  color: #eee;
+  padding: 2rem;
+}
+
+input, button {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+pre {
+  background: #222;
+  padding: 1rem;
+  margin-top: 1rem;
+}

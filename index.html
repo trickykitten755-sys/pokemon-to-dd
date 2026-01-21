@@ -1,16 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pokémon → D&D Stat Block</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Pokémon → D&D Converter</h1>
+  <main class="container">
+    <header class="header">
+      <h1>Pokémon → D&amp;D Stat Block</h1>
+      <p class="sub">Enter a Pokémon name, pick a level, generate a D&amp;D-style stat block.</p>
+    </header>
 
-  <input id="pokemonName" placeholder="Enter Pokémon name">
-  <button onclick="generate()">Generate</button>
+    <section class="panel">
+      <div class="row">
+        <label class="field">
+          <span>Pokémon Name</span>
+          <input id="pokemonName" placeholder="e.g., pikachu, charizard, mr-mime" autocomplete="off" />
+        </label>
 
-  <pre id="output"></pre>
+        <label class="field">
+          <span>Level: <strong id="levelLabel">50</strong></span>
+          <input id="pokeLevel" type="range" min="1" max="100" value="50" />
+        </label>
+
+        <label class="field">
+          <span>Version Group (learnset / Pokédex)</span>
+          <select id="versionGroup">
+            <option value="">(auto)</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button id="generateBtn">Generate</button>
+        <button id="shinyBtn" class="secondary" disabled>Toggle Shiny</button>
+        <button id="copyBtn" class="secondary" disabled>Copy Stat Block</button>
+      </div>
+
+      <div id="status" class="status" aria-live="polite"></div>
+    </section>
+
+    <section class="card">
+      <div class="cardTop">
+        <div class="spriteWrap">
+          <img id="sprite" alt="Pokémon sprite" />
+        </div>
+        <div class="meta">
+          <h2 id="title">—</h2>
+          <div id="badges" class="badges"></div>
+          <p id="dexEntry" class="dexEntry">Pokédex entry will appear here.</p>
+        </div>
+      </div>
+
+      <div class="split">
+        <div>
+          <h3>Stat Block</h3>
+          <pre id="output" class="pre"></pre>
+        </div>
+        <div>
+          <h3>Learnset (Level-Up)</h3>
+          <div class="learnsetHeader">
+            <span class="hint">Showing moves learned by level ≤ selected level.</span>
+          </div>
+          <div id="learnset" class="learnset"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span class="hint">Powered by PokéAPI. Designed for a D&amp;D-first campaign mashup.</span>
+    </footer>
+  </main>
 
   <script src="script.js"></script>
 </body>
